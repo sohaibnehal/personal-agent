@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Relay design tokens ── light mode */
+:root {
+  --background: #ffffff;
+  --bg: #ffffff;
+  --surface1: #f2f2f2;
+  --surface2: #e6e6e6;
+  --surface3: #e6e6e6;
+  --border: #000000;
+  --border-visible: #000000;
+  --grid: #e0e0e0;
+  --text1: #000000;
+  --text2: #595959;
+  --text3: #595959;
+  --text4: #a3a3a3;
+  --accent: #dd0000;
+  --accent-hover: #000000;
+  --on-accent: #ffffff;
+  --success: #2d8a4e;
+  --warning: #b45309;
+  --error: #dd0000;
+}
+
+[data-theme='dark'] {
+  --background: #000000;
+  --bg: #000000;
+  --surface1: #0a0a0a;
+  --surface2: #141414;
+  --surface3: #141414;
+  --border: #ffffff;
+  --border-visible: #ffffff;
+  --grid: #1a1a1a;
+  --text1: #ffffff;
+  --text2: #a6a6a6;
+  --text3: #a6a6a6;
+  --text4: #595959;
+  --accent: #ff2222;
+  --accent-hover: #ffffff;
+  --on-accent: #ffffff;
+  --success: #4ab66a;
+  --warning: #e5a73b;
+  --error: #ff2222;
+}
+
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text1);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Station hall grid — relay identity */
+.grid-bg {
+  background-image:
+    linear-gradient(to right, var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Relay prose — markdown rendered inside cards */
+.relay-prose {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text1);
+}
+
+.relay-prose > *:first-child { margin-top: 0; }
+.relay-prose > *:last-child  { margin-bottom: 0; }
+
+.relay-prose p {
+  margin-bottom: 0.625rem;
+}
+
+.relay-prose h1,
+.relay-prose h2,
+.relay-prose h3,
+.relay-prose h4 {
+  font-weight: 700;
+  color: var(--text1);
+  line-height: 1.2;
+  margin-top: 1.25rem;
+  margin-bottom: 0.375rem;
+}
+
+.relay-prose h1 { font-size: 17px; }
+
+.relay-prose h2 {
+  font-size: 15px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.625rem;
+}
+
+.relay-prose h3 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text2);
+}
+
+.relay-prose h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+  margin-top: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.relay-prose ul,
+.relay-prose ol {
+  padding-left: 1.25rem;
+  margin-bottom: 0.625rem;
+}
+
+.relay-prose li {
+  margin-bottom: 0.2rem;
+}
+
+.relay-prose strong {
+  font-weight: 700;
+}
+
+.relay-prose em {
+  color: var(--text2);
+  font-style: italic;
+}
+
+.relay-prose code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+}
+
+.relay-prose pre {
+  background-color: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  overflow-x: auto;
+  margin-bottom: 0.75rem;
+}
+
+.relay-prose pre code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.relay-prose blockquote {
+  border-left: 3px solid var(--border);
+  margin: 0.75rem 0;
+  padding-left: 12px;
+  color: var(--text2);
+}
+
+.relay-prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.relay-prose hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1rem 0;
+}
