@@ -57,6 +57,11 @@ const components: Components = {
       {children}
     </div>
   ),
+  a: ({ href, children, ...props }) => (
+    <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
+      {children}
+    </a>
+  ),
 };
 
 export function MarkdownRenderer({ content }: { content: string }) {
