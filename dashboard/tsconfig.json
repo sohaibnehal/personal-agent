@@ -17,7 +17,9 @@
     "baseUrl": ".",
     "paths": {
       "@schema": ["../src/db/schema"],
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "drizzle-orm": ["./node_modules/drizzle-orm/index.d.ts"],
+      "drizzle-orm/*": ["./node_modules/drizzle-orm/*"]
     }
   },
   "include": [
