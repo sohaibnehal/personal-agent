@@ -69,7 +69,7 @@ export function StocksStrip() {
 
   if (state.status === 'loading') {
     return (
-      <div style={{ borderBottom: BORDER, padding: '14px 32px', ...MONO, fontSize: '10px', letterSpacing: '0.1em', color: 'var(--text4)' }}>
+      <div style={{ borderBottom: BORDER, padding: '5px 16px', ...MONO, fontSize: '10px', letterSpacing: '0.1em', color: 'var(--text4)' }}>
         FETCHING PSX DATA...
       </div>
     );
@@ -77,7 +77,7 @@ export function StocksStrip() {
 
   if (state.status === 'error') {
     return (
-      <div style={{ borderBottom: BORDER, padding: '14px 32px', ...MONO, fontSize: '10px', letterSpacing: '0.1em', color: 'var(--text4)' }}>
+      <div style={{ borderBottom: BORDER, padding: '5px 16px', ...MONO, fontSize: '10px', letterSpacing: '0.1em', color: 'var(--text4)' }}>
         {state.message}
       </div>
     );
@@ -86,121 +86,81 @@ export function StocksStrip() {
   const { holdings, totals } = state;
 
   return (
-    <div style={{ borderBottom: BORDER, display: 'flex', alignItems: 'stretch', backgroundColor: 'var(--surface1)', overflow: 'hidden' }}>
+    <div style={{ borderBottom: BORDER, display: 'flex', alignItems: 'center', backgroundColor: 'var(--surface1)', overflow: 'hidden' }}>
 
-      {/* ── Portfolio summary ── */}
+      {/* ── Portfolio summary — single inline row ── */}
       <div
         style={{
           borderRight: BORDER,
-          padding: '16px 24px',
+          padding: '5px 16px',
           display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
+          alignItems: 'center',
           gap: '10px',
-          minWidth: '220px',
           flexShrink: 0,
+          whiteSpace: 'nowrap',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '8px' }}>
-          <span
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 800,
-              fontSize: '11px',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: 'var(--text1)',
-            }}
-          >
-            PSX Portfolio
-          </span>
-          {holdings[0]?.lastTradeDate && (
-            <span style={{ ...MONO, fontSize: '9px', letterSpacing: '0.08em', color: 'var(--text4)' }}>
-              AS OF {holdings[0].lastTradeDate.toUpperCase()}
-            </span>
-          )}
-        </div>
-
+        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+          PSX
+        </span>
         {totals ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-              <span style={{ ...MONO, fontSize: '22px', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1 }}>
-                PKR {fmt(totals.current, 0)}
+          <>
+            <span style={{ ...MONO, fontSize: '13px', fontWeight: 600, letterSpacing: '-0.02em' }}>
+              PKR {fmt(totals.current, 0)}
+            </span>
+            <PnlColor value={totals.pnl}>
+              <span style={{ ...MONO, fontSize: '9px', letterSpacing: '0.04em' }}>
+                {sign(totals.pnl)}{fmt(Math.abs(totals.pnlPercent))}%
               </span>
-            </div>
-            <div style={{ ...MONO, fontSize: '9.5px', letterSpacing: '0.06em', display: 'flex', gap: '10px' }}>
-              <PnlColor value={totals.pnl}>
-                {sign(totals.pnl)} PKR {fmt(Math.abs(totals.pnl), 0)}&nbsp;({sign(totals.pnlPercent)}{fmt(Math.abs(totals.pnlPercent))}%)
-              </PnlColor>
-            </div>
-            <div style={{ ...MONO, fontSize: '9px', letterSpacing: '0.06em', color: 'var(--text3)' }}>
-              COST&nbsp;PKR {fmt(totals.invested, 0)}
-            </div>
-          </div>
+            </PnlColor>
+          </>
         ) : (
-          <span style={{ ...MONO, fontSize: '10px', color: 'var(--text4)', letterSpacing: '0.06em' }}>NO DATA</span>
+          <span style={{ ...MONO, fontSize: '10px', color: 'var(--text4)' }}>NO DATA</span>
+        )}
+        {holdings[0]?.lastTradeDate && (
+          <span style={{ ...MONO, fontSize: '9px', color: 'var(--text4)', letterSpacing: '0.06em' }}>
+            {holdings[0].lastTradeDate.toUpperCase()}
+          </span>
         )}
       </div>
 
       {/* ── Individual holdings ── */}
-      <div style={{ display: 'flex', flex: 1, overflowX: 'auto' }}>
+      <div style={{ display: 'flex' }}>
         {holdings.map((h, i) => (
           <div
             key={h.symbol}
             style={{
               borderRight: i < holdings.length - 1 ? BORDER : 'none',
-              padding: '14px 20px',
+              padding: '5px 14px',
               display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              gap: '6px',
-              minWidth: '160px',
+              alignItems: 'center',
+              gap: '8px',
               flexShrink: 0,
+              whiteSpace: 'nowrap',
             }}
           >
-            {/* Symbol + market state */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-              <span
-                style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontWeight: 800,
-                  fontSize: '12px',
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  color: 'var(--text1)',
-                }}
-              >
-                {h.symbol}
-              </span>
-            </div>
-
-            {/* Price + day change */}
+            <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+              {h.symbol}
+            </span>
             {h.currentPrice !== null ? (
-              <div>
-                <div style={{ ...MONO, fontSize: '16px', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1 }}>
+              <>
+                <span style={{ ...MONO, fontSize: '12px', fontWeight: 600, letterSpacing: '-0.01em' }}>
                   {fmt(h.currentPrice)}
-                </div>
+                </span>
                 <PnlColor value={h.change}>
-                  <span style={{ ...MONO, fontSize: '10px', letterSpacing: '0.02em' }}>
-                    {sign(h.change!)} {fmt(Math.abs(h.change!))} ({sign(h.changePercent!)}{fmt(Math.abs(h.changePercent!))}%)
+                  <span style={{ ...MONO, fontSize: '9px', letterSpacing: '0.02em' }}>
+                    {sign(h.changePercent!)}{fmt(Math.abs(h.changePercent!))}%
                   </span>
                 </PnlColor>
-              </div>
+                <PnlColor value={h.pnl}>
+                  <span style={{ ...MONO, fontSize: '9px', letterSpacing: '0.02em' }}>
+                    {sign(h.pnl!)}PKR {fmt(Math.abs(h.pnl!), 0)}
+                  </span>
+                </PnlColor>
+              </>
             ) : (
-              <span style={{ ...MONO, fontSize: '11px', color: 'var(--text4)' }}>—</span>
+              <span style={{ ...MONO, fontSize: '10px', color: 'var(--text4)' }}>—</span>
             )}
-
-            {/* Your P&L */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <PnlColor value={h.pnl}>
-                <span style={{ ...MONO, fontSize: '10px', fontWeight: 500, letterSpacing: '0.02em' }}>
-                  {h.pnl !== null ? `${sign(h.pnl)} PKR ${fmt(Math.abs(h.pnl), 0)}` : '—'}
-                </span>
-              </PnlColor>
-              <span style={{ ...MONO, fontSize: '9px', color: 'var(--text3)', letterSpacing: '0.04em' }}>
-                {h.shares} shares · cost {fmt(h.buyPrice)}
-              </span>
-            </div>
           </div>
         ))}
       </div>

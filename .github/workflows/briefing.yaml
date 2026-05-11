@@ -22,4 +22,8 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ASANA_PAT: ${{ secrets.ASANA_PAT }}
           ASANA_WORKSPACE_GID: ${{ secrets.ASANA_WORKSPACE_GID }}
+          MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
+          MS_TENANT_ID: ${{ vars.MS_TENANT_ID }}
+          MS_ACCOUNTS: ${{ vars.MS_ACCOUNTS }}
+          MS_REFRESH_TOKEN_CITYLOGIX: ${{ secrets.MS_REFRESH_TOKEN_CITYLOGIX }}
         run: npm run agent

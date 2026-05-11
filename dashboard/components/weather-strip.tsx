@@ -193,7 +193,7 @@ export function WeatherStrip() {
       <div
         style={{
           borderBottom: BORDER,
-          padding: '14px 32px',
+          padding: '5px 16px',
           ...MONO,
           fontSize: '10px',
           letterSpacing: '0.1em',
@@ -210,7 +210,7 @@ export function WeatherStrip() {
       <div
         style={{
           borderBottom: BORDER,
-          padding: '14px 32px',
+          padding: '5px 16px',
           ...MONO,
           fontSize: '10px',
           letterSpacing: '0.1em',
@@ -229,132 +229,70 @@ export function WeatherStrip() {
       style={{
         borderBottom: BORDER,
         display: 'flex',
-        alignItems: 'stretch',
+        alignItems: 'center',
         backgroundColor: 'var(--surface1)',
         overflow: 'hidden',
+        padding: '0',
       }}
     >
-      {/* ── Current conditions ── */}
+      {/* ── Current conditions — single inline row ── */}
       <div
         style={{
           borderRight: BORDER,
-          padding: '16px 24px',
+          padding: '5px 16px',
           display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
+          alignItems: 'center',
           gap: '10px',
-          minWidth: '220px',
           flexShrink: 0,
+          whiteSpace: 'nowrap',
         }}
       >
-        {/* Temp + icon */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <WeatherIcon id={current.weatherId} size={22} />
-          <span
-            style={{
-              ...MONO,
-              fontSize: '32px',
-              fontWeight: 600,
-              letterSpacing: '-0.03em',
-              lineHeight: 1,
-            }}
-          >
-            {current.temp}°C
-          </span>
-        </div>
-
-        {/* Location + metadata */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-          <span
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 800,
-              fontSize: '11px',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: 'var(--text1)',
-            }}
-          >
-            {city}{country ? `, ${country}` : ''}
-          </span>
-
-          <div
-            style={{
-              ...MONO,
-              fontSize: '9.5px',
-              letterSpacing: '0.06em',
-              color: 'var(--text2)',
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '10px',
-            }}
-          >
-            <span style={{ color: 'var(--text1)', fontWeight: 500 }}>{owmLabel(current.weatherId)}</span>
-            <span>FL {current.feelsLike}°</span>
-            <span>W {current.windKph}km/h</span>
-            <span>H {current.humidity}%</span>
-          </div>
-        </div>
+        <WeatherIcon id={current.weatherId} size={14} />
+        <span style={{ ...MONO, fontSize: '15px', fontWeight: 600, letterSpacing: '-0.02em' }}>
+          {current.temp}°C
+        </span>
+        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+          {city}{country ? `, ${country}` : ''}
+        </span>
+        <span style={{ ...MONO, fontSize: '9px', color: 'var(--text3)', letterSpacing: '0.05em' }}>
+          {owmLabel(current.weatherId)}
+        </span>
+        <span style={{ ...MONO, fontSize: '9px', color: 'var(--text3)', letterSpacing: '0.05em' }}>
+          FL {current.feelsLike}°
+        </span>
+        <span style={{ ...MONO, fontSize: '9px', color: 'var(--text3)', letterSpacing: '0.05em' }}>
+          W {current.windKph}km/h
+        </span>
       </div>
 
-      {/* ── 7-day forecast ── */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      {/* ── Forecast cells ── */}
+      <div style={{ display: 'flex' }}>
         {forecast.map((day, i) => {
           const isToday = i === 0;
           const date = new Date(day.dt * 1000);
-          const dayName = isToday ? 'TODAY' : DAYS[date.getDay()];
+          const dayName = isToday ? 'TDY' : DAYS[date.getDay()];
 
           return (
             <div
               key={day.dt}
               style={{
-                flex: 1,
                 borderRight: i < forecast.length - 1 ? BORDER : 'none',
-                padding: '10px 4px',
+                padding: '5px 10px',
                 display: 'flex',
-                flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '6px',
+                gap: '5px',
                 backgroundColor: isToday ? 'var(--background)' : undefined,
               }}
             >
-              <span
-                style={{
-                  ...MONO,
-                  fontSize: '8.5px',
-                  fontWeight: 500,
-                  letterSpacing: '0.1em',
-                  color: isToday ? 'var(--accent)' : 'var(--text3)',
-                }}
-              >
+              <span style={{ ...MONO, fontSize: '8px', letterSpacing: '0.08em', color: isToday ? 'var(--accent)' : 'var(--text4)', width: '18px' }}>
                 {dayName}
               </span>
-
-              <div style={{ color: isToday ? 'var(--text1)' : 'var(--text2)', display: 'flex' }}>
-                <WeatherIcon id={day.weatherId} size={15} />
-              </div>
-
-              <div style={{ textAlign: 'center', lineHeight: 1 }}>
-                <div style={{ ...MONO, fontSize: '11px', fontWeight: 600, letterSpacing: '-0.01em' }}>
-                  {day.high}°
-                </div>
-                <div style={{ ...MONO, fontSize: '10px', letterSpacing: '-0.01em', color: 'var(--text3)', marginTop: '2px' }}>
-                  {day.low}°
-                </div>
-              </div>
-
-              <span
-                style={{
-                  ...MONO,
-                  fontSize: '7.5px',
-                  letterSpacing: '0.06em',
-                  color: 'var(--text4)',
-                  textAlign: 'center',
-                  lineHeight: 1.2,
-                }}
-              >
-                {owmLabel(day.weatherId)}
+              <WeatherIcon id={day.weatherId} size={12} />
+              <span style={{ ...MONO, fontSize: '10px', fontWeight: 600, letterSpacing: '-0.01em' }}>
+                {day.high}°
+              </span>
+              <span style={{ ...MONO, fontSize: '9px', color: 'var(--text4)', letterSpacing: '-0.01em' }}>
+                {day.low}°
               </span>
             </div>
           );
