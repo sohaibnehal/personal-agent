@@ -2,6 +2,9 @@ import { getLatestBriefingsBySource, getCursorState } from '../lib/queries';
 import { formatDate, formatTime, relativeTime } from '../lib/utils';
 import { BriefingCard } from '../components/briefing-card';
 import { EmptyState } from '../components/empty-state';
+import { WeatherStrip } from '../components/weather-strip';
+import { StocksStrip } from '../components/stocks-strip';
+import { DigestStrip } from '../components/digest-strip';
 
 // Always fetch fresh data — no Next.js static cache
 export const dynamic = 'force-dynamic';
@@ -101,6 +104,15 @@ export default async function DashboardPage() {
           </div>
         </div>
       </header>
+
+      {/* ── Morning digest ── */}
+      <DigestStrip />
+
+      {/* ── Weather strip ── */}
+      <WeatherStrip />
+
+      {/* ── Stocks strip ── */}
+      <StocksStrip />
 
       {/* ── Content ── */}
       <main className="grid-bg" style={{ padding: '32px' }}>
