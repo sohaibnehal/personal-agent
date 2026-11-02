@@ -3,13 +3,13 @@ import type { Source } from '../types.js';
 import type { NewRawItem } from '../../db/schema.js';
 import { getCursor } from '../../db/cursors.js';
 
-interface GmailCursor {
+type GmailCursor = {
   /**
    * Gmail's History API cursor. Increments with every mailbox change.
    * On first run this is undefined and we do a time-windowed query instead.
    */
   historyId?: string;
-}
+};
 
 function client(account: string) {
   const clientId = process.env.GMAIL_CLIENT_ID;

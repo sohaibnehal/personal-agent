@@ -1,0 +1,28 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            dashboard/package-lock.json
+      - name: Install (agent)
+        run: npm ci
+      - name: Typecheck (agent)
+        run: npm run typecheck
+      - name: Install (dashboard)
+        run: npm ci --prefix dashboard
+      - name: Typecheck (dashboard)
+        run: npm run typecheck --prefix dashboard

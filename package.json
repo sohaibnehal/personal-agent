@@ -11,7 +11,8 @@
     "db:studio": "drizzle-kit studio",
     "auth:gmail": "tsx src/sources/gmail/auth.ts",
     "dashboard:dev": "npm run dev --prefix dashboard",
-    "dashboard:build": "npm run build --prefix dashboard"
+    "dashboard:build": "npm run build --prefix dashboard",
+    "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.30.0",
