@@ -20,4 +20,14 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLASSIFIER_MODEL: ${{ vars.CLASSIFIER_MODEL }}
+          # Personal Gmail (read-only OAuth)
+          GMAIL_ACCOUNTS: ${{ vars.GMAIL_ACCOUNTS }}
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN_PERSONAL: ${{ secrets.GMAIL_REFRESH_TOKEN_PERSONAL }}
+          # Personal Yahoo (IMAP, read-only, app password)
+          YAHOO_ACCOUNTS: ${{ vars.YAHOO_ACCOUNTS }}
+          YAHOO_EMAIL_PERSONAL: ${{ secrets.YAHOO_EMAIL_PERSONAL }}
+          YAHOO_APP_PASSWORD_PERSONAL: ${{ secrets.YAHOO_APP_PASSWORD_PERSONAL }}
         run: npm run agent

@@ -22,6 +22,8 @@ jobs:
         run: npm ci
       - name: Typecheck (agent)
         run: npm run typecheck
+      - name: Unit tests (agent)
+        run: npm test
       - name: Install (dashboard)
         run: npm ci --prefix dashboard
       - name: Typecheck (dashboard)

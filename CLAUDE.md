@@ -5,7 +5,7 @@ Context for Claude Code working in this repo. Human-facing setup lives in `READM
 ## What this is
 
 A personal briefing agent. Runs on a GitHub Actions cron, pulls from external
-sources (personal Gmail today), summarizes via the Anthropic
+sources (personal Gmail and Yahoo — never Citylogix accounts), summarizes via the Anthropic
 API, stores results in Neon Postgres. A separate Next.js dashboard (not yet
 built) reads from the same DB.
 
@@ -133,3 +133,10 @@ These are load-bearing. Don't violate them without flagging it.
 - Read `src/index.ts` to see how the pieces fit together end-to-end.
 - The README is for the human; if you need setup steps (Neon, Google Cloud),
   read that.
+
+## Safety rules for this repo
+
+- Mail access is read-only. Gmail uses `gmail.readonly`; Yahoo opens folders with `readOnly: true` (EXAMINE).
+  Do not add flag/move/delete calls without the Phase 2 approval design in `docs/ROADMAP.md`.
+- Any prompt containing email content must use `src/lib/untrusted.ts` (`UNTRUSTED_CONTENT_RULES` + `wrapUntrusted`).
+- Secrets live in `.env` (git-ignored) and GitHub/Vercel settings — never in code, docs or prompts.

@@ -29,7 +29,7 @@
 | 0.2 | ✅ *Done: Basic-auth middleware; set `DASHBOARD_USER` / `DASHBOARD_PASSWORD` in Vercel.* **Lock the dashboard**: confirm Vercel Deployment Protection, or add simple auth middleware | Briefings and portfolio are private | S |
 | 0.3 | ✅ *Done.* Fix the 2 type errors; add `typecheck` script and a PR check workflow | Keeps main green | S |
 | 0.4 | Record a run status per source (ok / failed / error text) and show failures on the dashboard; exit non-zero when every source fails | Failures are silent today | S–M |
-| 0.5 | Add an injection guard to the summary prompts (email content wrapped as untrusted data) | Needed before any email triage | S |
+| 0.5 | ✅ *Done in Phase 1.* Add an injection guard to the summary prompts (email content wrapped as untrusted data) | Needed before any email triage | S |
 | 0.6 | Refresh model IDs and the Anthropic SDK version | SDK is `^0.30`; models pinned to older versions | S |
 
 ## Phase 1 — Personal email, read-only (Email harness Stages 0–1)
@@ -38,12 +38,12 @@ Built as a **parallel route**: new tables and modules alongside the existing bri
 
 | # | Item | Notes | Size |
 |---|---|---|---|
-| 1.1 | **Turn on personal Gmail** (OAuth, secrets, workflow env) | Code already exists; quickest real win | S |
-| 1.2 | **Yahoo spike** → `docs/yahoo-spike.md` | App-password login, folder list, `EXAMINE` (read-only), UID behaviour, `MOVE`/`UIDPLUS` support. Headers only, nothing sent to a model | S |
-| 1.3 | **Yahoo source** (`src/sources/yahoo/`, IMAP read-only) | Same `Source` interface; cursor = per-folder UIDVALIDITY + last UID | M |
-| 1.4 | **Per-message classification** (`classifications` table: purpose, importance, suggested action, retention, reasons, rule/prompt version) | Separate from `briefings`; runs only on new items | M |
-| 1.5 | **Attention view** on the dashboard: needs reply / decision / payment / deadline, each linking to the original | Explicit deadlines shown apart from inferred urgency | M |
-| 1.6 | **Feedback buttons** (Important / Not important / Keep) → `feedback_events` | Starts the reviewed-example set (target 100–200) | S–M |
+| 1.1 | 🔧 *Code ready; needs your OAuth setup.* **Turn on personal Gmail** (OAuth, secrets, workflow env) | Code already exists; quickest real win | S |
+| 1.2 | 🔧 *Script ready (`npm run spike:yahoo`).* **Yahoo spike** → `docs/yahoo-spike.md` | App-password login, folder list, `EXAMINE` (read-only), UID behaviour, `MOVE`/`UIDPLUS` support. Headers only, nothing sent to a model | S |
+| 1.3 | ✅ *Built.* **Yahoo source** (`src/sources/yahoo/`, IMAP read-only) | Same `Source` interface; cursor = per-folder UIDVALIDITY + last UID | M |
+| 1.4 | ✅ *Built.* **Per-message classification** (`classifications` table: purpose, importance, suggested action, retention, reasons, rule/prompt version) | Separate from `briefings`; runs only on new items | M |
+| 1.5 | ✅ *Built.* **Attention view** on the dashboard: needs reply / decision / payment / deadline, each linking to the original | Explicit deadlines shown apart from inferred urgency | M |
+| 1.6 | ✅ *Built (+ Done).* **Feedback buttons** (Important / Not important / Keep) → `feedback_events` | Starts the reviewed-example set (target 100–200) | S–M |
 
 **Gate:** review a week of classifications before anything can change a mailbox.
 

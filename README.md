@@ -1,21 +1,27 @@
 # briefing-agent
 
-Personal morning-briefing agent. Pulls from personal email (Gmail today),
-summarizes via Claude, stores in Postgres, and renders to a dashboard.
+Personal morning-briefing agent. Pulls from personal email (Gmail, Yahoo),
+summarizes and labels it via Claude, stores in Postgres, and renders to a dashboard.
+**Personal accounts only** — no Citylogix data. Everything is read-only: nothing in a mailbox is changed.
+See `docs/ROADMAP.md` and `docs/PHASE-1-PLAN.md`.
 
 ## Architecture
 
 ```
 GitHub Actions (hourly cron)
     │
-    ├─ for each Source (gmail)
+    ├─ for each Source (gmail, yahoo)
     │     ├─ read cursor from Postgres
-    │     ├─ fetch new items from API
+    │     ├─ fetch new items (read-only)
     │     ├─ insert into raw_items
     │     ├─ summarize new items via Claude → briefings
     │     └─ write new cursor
     │
-    └─ Neon Postgres ─── Next.js dashboard reads `briefings`
+    ├─ classify new emails via Claude Haiku → classifications
+    │
+    └─ Neon Postgres ─── Next.js dashboard (login required)
+                           ├─ Attention list (classifications + feedback buttons → feedback_events)
+                           └─ briefing cards
 ```
 
 Two key design choices:
@@ -27,14 +33,13 @@ Two key design choices:
    re-fetching, and the dashboard can drill from a summary into the underlying
    items.
 
-## Phase 1 status (current)
+## Status
 
-- [x] DB schema (cursors, raw_items, briefings)
-- [x] Source interface
-- [x] Gmail source (incremental via History API)
-- [x] Summarization wrapper (Claude Sonnet)
-- [x] Runner + GitHub Actions workflow
-- [ ] Dashboard (Next.js) — next up after Gmail is verified working
+- [x] Sources: Gmail (History API), Yahoo (IMAP, read-only `EXAMINE`)
+- [x] Briefings per source (Claude Sonnet), with email text wrapped as untrusted data
+- [x] Per-message labels (`classifications`, Claude Haiku, prompt version `c1`)
+- [x] Dashboard: login, Attention list, feedback buttons (`feedback_events`)
+- [ ] Phase 2: approved cleanup — see `docs/ROADMAP.md`
 
 ## Setup
 
@@ -64,14 +69,16 @@ From <https://console.anthropic.com/> → API Keys. Add to `.env` as `ANTHROPIC_
 
 1. <https://console.cloud.google.com/> → New Project
 2. APIs & Services → Library → enable **Gmail API**
-3. APIs & Services → OAuth consent screen → External; add yourself as a test user
+3. APIs & Services → OAuth consent screen → External; add yourself as a test user.
+   Then set **Publishing status → In production** (it stays "unverified", which is fine
+   for your own account). Apps left in *Testing* get refresh tokens that expire after 7 days.
 4. Credentials → Create Credentials → OAuth client ID → **Desktop app**
 5. Copy client ID + secret into `.env` as `GMAIL_CLIENT_ID` / `GMAIL_CLIENT_SECRET`
-6. Set `GMAIL_ACCOUNTS=personal,work` (or whatever labels you want)
+6. Set `GMAIL_ACCOUNTS=personal` (personal accounts only)
 7. For each account, run:
 
    ```bash
-   pnpm auth:gmail
+   npm run auth:gmail
    ```
 
    Follow the prompt. It prints a refresh token. Paste it into `.env` as
@@ -79,39 +86,51 @@ From <https://console.anthropic.com/> → API Keys. Add to `.env` as `ANTHROPIC_
 
    Sign in with a different Google account each time you run it.
 
-### 5. Try it locally
+### 4b. Yahoo (IMAP app password)
+
+1. Yahoo → Account Info → Account Security → **Generate app password** (name it "briefing-agent").
+2. In `.env`: `YAHOO_ACCOUNTS=personal`, `YAHOO_EMAIL_PERSONAL=<you>@yahoo.com`,
+   `YAHOO_APP_PASSWORD_PERSONAL=<the app password>`.
+3. Run the read-only connection check:
+
+   ```bash
+   npm run spike:yahoo
+   ```
+
+   It prints the latest 20 inbox headers to your terminal only and writes
+   non-content findings to `docs/yahoo-spike.md`.
+
+### 5. Database migration and local run
 
 ```bash
-pnpm agent:gmail
+npm run db:migrate        # adds classifications + feedback_events
+npm run agent:gmail       # or: npm run agent:yahoo
+npm run classify          # label new emails
+npm test                  # unit tests
 ```
 
-Expected on first run: pulls last 24h of inbox, inserts raw_items, writes one
-briefing per account. Check `db:studio` to inspect.
+Expected on first run: pulls the last 24h of inbox, inserts raw_items, writes one
+briefing per account, then labels the emails. Check `db:studio` to inspect.
 
 ### 6. Deploy to GitHub Actions
 
 In your repo settings:
 
 - **Variables** (Settings → Secrets and variables → Actions → Variables):
-  - `GMAIL_ACCOUNTS` = `personal,work`
+  - `GMAIL_ACCOUNTS` = `personal`
+  - `YAHOO_ACCOUNTS` = `personal`
+  - `CLASSIFIER_MODEL` (optional)
 - **Secrets** (same page, Secrets tab):
   - `DATABASE_URL`
   - `ANTHROPIC_API_KEY`
   - `GMAIL_CLIENT_ID`
   - `GMAIL_CLIENT_SECRET`
   - `GMAIL_REFRESH_TOKEN_PERSONAL`
-  - `GMAIL_REFRESH_TOKEN_WORK`
+  - `YAHOO_EMAIL_PERSONAL`
+  - `YAHOO_APP_PASSWORD_PERSONAL`
 
 Push to main. The workflow runs hourly. Trigger manually from the Actions tab to
 verify before waiting for the cron.
-
-## What to do next
-
-Once you've seen Gmail flow end-to-end (raw_items populated, briefings populated):
-
-1. Stand up the Next.js dashboard. It needs only a read connection to the same
-   Neon DB. One page, one section per (source, account), showing the latest
-   briefing's markdown + a count + a link to the underlying items.
 
 ## Adding a new source — checklist
 
