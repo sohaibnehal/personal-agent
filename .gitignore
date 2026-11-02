@@ -6,4 +6,3 @@ dist/
 .next/
 .turbo/
 .DS_Store
-drizzle/meta/

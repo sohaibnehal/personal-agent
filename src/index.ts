@@ -5,9 +5,12 @@ import { setCursor } from './db/cursors.js';
 import { summarize } from './summarize/index.js';
 import type { Source } from './sources/types.js';
 import { gmailSource } from './sources/gmail/index.js';
+import { yahooSource } from './sources/yahoo/index.js';
+import { classifyPending } from './classify/index.js';
 
 const ALL_SOURCES: Source[] = [
   gmailSource,
+  yahooSource,
 ];
 
 function parseArgs(): { only?: string } {
@@ -66,6 +69,17 @@ async function main() {
     process.exit(1);
   }
   for (const s of sources) await runSource(s);
+
+  // Label new emails (read-only: writes only to our own database).
+  if (!process.argv.includes('--no-classify')) {
+    console.log('\n→ classify');
+    try {
+      const c = await classifyPending();
+      console.log(`  labelled ${c.labelled} (${c.uncertain} uncertain, ${c.failedBatches} failed batches)`);
+    } catch (e) {
+      console.error('  ✗ classify failed:', e instanceof Error ? e.message : e);
+    }
+  }
   console.log('\n✓ done');
 }
 

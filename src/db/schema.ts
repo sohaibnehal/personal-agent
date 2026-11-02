@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, jsonb, uuid, index, uniqueIndex } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, jsonb, uuid, index, uniqueIndex, boolean } from 'drizzle-orm/pg-core';
 
 /**
  * cursors — one row per (source, account). Tracks "since last run" state.
@@ -34,7 +34,7 @@ export const rawItems = pgTable(
   'raw_items',
   {
     id: uuid('id').defaultRandom().primaryKey(),
-    source: text('source').notNull(),         // 'gmail'
+    source: text('source').notNull(),         // 'gmail' | 'yahoo'
     account: text('account').notNull(),       // 'personal' | 'work' | etc.
     externalId: text('external_id').notNull(),
     kind: text('kind').notNull(),             // 'email' | 'message' | 'mention' | 'task'
@@ -73,7 +73,58 @@ export const briefings = pgTable(
   }),
 );
 
+/**
+ * classifications — one label per (email, prompt version). Written by src/classify.
+ * Separate from `briefings`: a briefing summarises a run, a classification describes one message.
+ * A new prompt version adds new rows instead of overwriting old ones.
+ */
+export const classifications = pgTable(
+  'classifications',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    rawItemId: uuid('raw_item_id').notNull().references(() => rawItems.id, { onDelete: 'cascade' }),
+    promptVersion: text('prompt_version').notNull(),
+    model: text('model').notNull(),
+    purpose: text('purpose').notNull(),       // see src/classify/schema.ts
+    importance: text('importance').notNull(), // 'high' | 'normal' | 'low'
+    action: text('action').notNull(),         // 'reply' | 'decide' | 'pay' | 'follow_up' | 'none'
+    retention: text('retention').notNull(),   // 'keep' | 'archive_ok' | 'clutter_candidate'
+    deadline: timestamp('deadline', { withTimezone: true }),
+    deadlineExplicit: boolean('deadline_explicit').notNull().default(false),
+    reason: text('reason').notNull(),
+    uncertain: boolean('uncertain').notNull().default(false),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    itemVersion: uniqueIndex('classifications_item_version').on(t.rawItemId, t.promptVersion),
+    actionIdx: index('classifications_action_idx').on(t.action, t.importance),
+  }),
+);
+
+/**
+ * feedback_events — append-only record of what the user said about a message
+ * (Important / Not important / Keep / Done). Never updated in place; the latest event wins.
+ * Feedback never grants permission to change a mailbox.
+ */
+export const feedbackEvents = pgTable(
+  'feedback_events',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    rawItemId: uuid('raw_item_id').notNull().references(() => rawItems.id, { onDelete: 'cascade' }),
+    classificationId: uuid('classification_id').references(() => classifications.id, { onDelete: 'set null' }),
+    decision: text('decision').notNull(),     // 'important' | 'not_important' | 'keep' | 'done'
+    reason: text('reason'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    itemIdx: index('feedback_events_item_idx').on(t.rawItemId, t.createdAt),
+  }),
+);
+
 export type Cursor = typeof cursors.$inferSelect;
 export type RawItem = typeof rawItems.$inferSelect;
 export type NewRawItem = typeof rawItems.$inferInsert;
 export type Briefing = typeof briefings.$inferSelect;
+export type Classification = typeof classifications.$inferSelect;
+export type NewClassification = typeof classifications.$inferInsert;
+export type FeedbackEvent = typeof feedbackEvents.$inferSelect;

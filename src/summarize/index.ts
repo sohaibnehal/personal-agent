@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import type { RawItem } from '../db/schema.js';
+import { UNTRUSTED_CONTENT_RULES, wrapUntrusted } from '../lib/untrusted.js';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -9,6 +10,8 @@ Be terse. Group by importance, not by sender. For each group, use a short headin
 and 1-line bullets. Highlight: action requested, deadlines, replies expected.
 Skip newsletters and notifications unless something inside is unusual. Use markdown.`,
 };
+// Yahoo mail gets the same briefing style as Gmail.
+SYSTEM_PROMPTS.yahoo = SYSTEM_PROMPTS.gmail!;
 
 /**
  * Summarize a batch of items for a given source.
@@ -20,13 +23,20 @@ export async function summarize(source: string, items: RawItem[]): Promise<strin
   }
 
   // Compact, structured payload — keeps tokens down vs. dumping raw JSON.
+  // Each item is wrapped as untrusted data so email text can't steer the summary.
   const lines = items.map((item, i) => {
-    const time = item.occurredAt.toISOString();
-    const from = (item.payload as Record<string, unknown>)?.from ?? '';
-    return `[${i + 1}] ${time} | ${item.title ?? ''} | ${item.url ?? ''} | ${from}\n    ${item.snippet ?? ''}`;
+    const from = (item.payload as Record<string, unknown>)?.from;
+    return wrapUntrusted(i + 1, {
+      received: item.occurredAt.toISOString(),
+      subject: item.title,
+      url: item.url,
+      from: typeof from === 'string' ? from : '',
+      preview: item.snippet,
+    });
   });
 
-  const system = SYSTEM_PROMPTS[source] ?? 'Summarize the following items in markdown. Be terse.';
+  const base = SYSTEM_PROMPTS[source] ?? 'Summarize the following items in markdown. Be terse.';
+  const system = `${base}\n\n${UNTRUSTED_CONTENT_RULES}`;
 
   const res = await anthropic.messages.create({
     model: 'claude-sonnet-4-5-20250929',
@@ -35,7 +45,7 @@ export async function summarize(source: string, items: RawItem[]): Promise<strin
     messages: [
       {
         role: 'user',
-        content: `Summarize these ${items.length} new items:\n\n${lines.join('\n')}`,
+        content: `Summarize these ${items.length} new items:\n\n${lines.join('\n\n')}`,
       },
     ],
   });
