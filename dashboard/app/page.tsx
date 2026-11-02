@@ -1,18 +1,20 @@
-import { getLatestBriefingsBySource, getCursorState } from '../lib/queries';
+import { getLatestBriefingsBySource, getCursorState, getAttentionItems } from '../lib/queries';
 import { formatDate, formatTime, relativeTime } from '../lib/utils';
 import { BriefingCard } from '../components/briefing-card';
 import { EmptyState } from '../components/empty-state';
 import { WeatherStrip } from '../components/weather-strip';
 import { StocksStrip } from '../components/stocks-strip';
 import { DigestStrip } from '../components/digest-strip';
+import { AttentionList } from '../components/attention-list';
 
 // Always fetch fresh data — no Next.js static cache
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
-  const [briefings, cursors] = await Promise.all([
+  const [briefings, cursors, attention] = await Promise.all([
     getLatestBriefingsBySource(),
     getCursorState(),
+    getAttentionItems(),
   ]);
 
   const now = new Date();
@@ -104,6 +106,9 @@ export default async function DashboardPage() {
           </div>
         </div>
       </header>
+
+      {/* ── Attention: emails that need action ── */}
+      <AttentionList items={attention} />
 
       {/* ── Morning digest ── */}
       <DigestStrip />
