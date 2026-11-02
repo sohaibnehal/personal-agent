@@ -2,7 +2,7 @@
   "name": "briefing-agent",
   "version": "0.1.0",
   "private": true,
-  "description": "Personal morning briefing agent: pulls from personal email into a dashboard.",
+  "description": "Personal morning briefing agent: pulls personal email (Gmail, Yahoo), labels it, and shows it on a dashboard.",
   "scripts": {
     "agent": "tsx src/index.ts",
     "agent:gmail": "tsx src/index.ts --source gmail",
@@ -12,19 +12,24 @@
     "auth:gmail": "tsx src/sources/gmail/auth.ts",
     "dashboard:dev": "npm run dev --prefix dashboard",
     "dashboard:build": "npm run build --prefix dashboard",
-    "typecheck": "tsc --noEmit -p ."
+    "typecheck": "tsc --noEmit -p .",
+    "agent:yahoo": "tsx src/index.ts --source yahoo",
+    "classify": "tsx src/classify/run.ts",
+    "spike:yahoo": "tsx scripts/yahoo-spike.ts",
+    "test": "tsx --test tests/*.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.30.0",
     "@neondatabase/serverless": "^0.10.4",
     "drizzle-orm": "^0.36.0",
     "googleapis": "^144.0.0",
+    "imapflow": "^1.7.8",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "drizzle-kit": "^0.28.0",
     "dotenv": "^16.4.5",
+    "drizzle-kit": "^0.28.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0"
   },
