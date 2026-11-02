@@ -26,8 +26,8 @@
 | # | Item | Why | Size |
 |---|---|---|---|
 | 0.1 | ✅ *Done: source removed (`8e86c0d`), `briefing-agent` Azure app registration deleted from the Citylogix directory, Asana token and GitHub secrets removed.* ~~Decide on the Citylogix Outlook source~~: move it to an IT-approved company setup, or remove it, revoke the token and delete its rows | Company email in personal GitHub/Neon/Vercel conflicts with the IT Software Approval policy (grace period ends **20 Nov 2026**) | S |
-| 0.2 | **Lock the dashboard**: confirm Vercel Deployment Protection, or add simple auth middleware | Briefings and portfolio are private | S |
-| 0.3 | Fix the 2 type errors; add `typecheck` script and a PR check workflow | Keeps main green | S |
+| 0.2 | ✅ *Done: Basic-auth middleware; set `DASHBOARD_USER` / `DASHBOARD_PASSWORD` in Vercel.* **Lock the dashboard**: confirm Vercel Deployment Protection, or add simple auth middleware | Briefings and portfolio are private | S |
+| 0.3 | ✅ *Done.* Fix the 2 type errors; add `typecheck` script and a PR check workflow | Keeps main green | S |
 | 0.4 | Record a run status per source (ok / failed / error text) and show failures on the dashboard; exit non-zero when every source fails | Failures are silent today | S–M |
 | 0.5 | Add an injection guard to the summary prompts (email content wrapped as untrusted data) | Needed before any email triage | S |
 | 0.6 | Refresh model IDs and the Anthropic SDK version | SDK is `^0.30`; models pinned to older versions | S |
