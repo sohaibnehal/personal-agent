@@ -5,7 +5,7 @@ Context for Claude Code working in this repo. Human-facing setup lives in `READM
 ## What this is
 
 A personal briefing agent. Runs on a GitHub Actions cron, pulls from external
-sources (Gmail today; Outlook, Teams later), summarizes via the Anthropic
+sources (personal Gmail today), summarizes via the Anthropic
 API, stores results in Neon Postgres. A separate Next.js dashboard (not yet
 built) reads from the same DB.
 

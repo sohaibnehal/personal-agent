@@ -1,6 +1,6 @@
 # briefing-agent
 
-Personal morning-briefing agent. Pulls from Gmail (and later Outlook, Teams),
+Personal morning-briefing agent. Pulls from personal email (Gmail today),
 summarizes via Claude, stores in Postgres, and renders to a dashboard.
 
 ## Architecture
@@ -8,7 +8,7 @@ summarizes via Claude, stores in Postgres, and renders to a dashboard.
 ```
 GitHub Actions (hourly cron)
     │
-    ├─ for each Source (gmail, outlook, teams)
+    ├─ for each Source (gmail)
     │     ├─ read cursor from Postgres
     │     ├─ fetch new items from API
     │     ├─ insert into raw_items
@@ -35,8 +35,6 @@ Two key design choices:
 - [x] Summarization wrapper (Claude Sonnet)
 - [x] Runner + GitHub Actions workflow
 - [ ] Dashboard (Next.js) — next up after Gmail is verified working
-- [ ] Outlook source (Phase 3)
-- [ ] Teams source (Phase 4)
 
 ## Setup
 
@@ -114,9 +112,6 @@ Once you've seen Gmail flow end-to-end (raw_items populated, briefings populated
 1. Stand up the Next.js dashboard. It needs only a read connection to the same
    Neon DB. One page, one section per (source, account), showing the latest
    briefing's markdown + a count + a link to the underlying items.
-2. Then add Outlook (`src/sources/outlook/`) — same `Source` interface.
-   Microsoft Graph delta queries are the analog of Gmail's history API.
-3. Teams reuses Outlook's auth.
 
 ## Adding a new source — checklist
 
