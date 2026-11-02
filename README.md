@@ -1,6 +1,6 @@
 # briefing-agent
 
-Personal morning-briefing agent. Pulls from Gmail (and later Outlook, Teams, Asana),
+Personal morning-briefing agent. Pulls from Gmail (and later Outlook, Teams),
 summarizes via Claude, stores in Postgres, and renders to a dashboard.
 
 ## Architecture
@@ -8,7 +8,7 @@ summarizes via Claude, stores in Postgres, and renders to a dashboard.
 ```
 GitHub Actions (hourly cron)
     │
-    ├─ for each Source (gmail, outlook, teams, asana)
+    ├─ for each Source (gmail, outlook, teams)
     │     ├─ read cursor from Postgres
     │     ├─ fetch new items from API
     │     ├─ insert into raw_items
@@ -37,7 +37,6 @@ Two key design choices:
 - [ ] Dashboard (Next.js) — next up after Gmail is verified working
 - [ ] Outlook source (Phase 3)
 - [ ] Teams source (Phase 4)
-- [ ] Asana source (Phase 5)
 
 ## Setup
 
@@ -118,7 +117,6 @@ Once you've seen Gmail flow end-to-end (raw_items populated, briefings populated
 2. Then add Outlook (`src/sources/outlook/`) — same `Source` interface.
    Microsoft Graph delta queries are the analog of Gmail's history API.
 3. Teams reuses Outlook's auth.
-4. Asana is the simplest of the four.
 
 ## Adding a new source — checklist
 

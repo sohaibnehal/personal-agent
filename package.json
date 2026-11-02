@@ -2,7 +2,7 @@
   "name": "briefing-agent",
   "version": "0.1.0",
   "private": true,
-  "description": "Personal morning briefing agent: pulls from Gmail, Outlook, Teams, Asana into a dashboard.",
+  "description": "Personal morning briefing agent: pulls from Gmail, Outlook, Teams into a dashboard.",
   "scripts": {
     "agent": "tsx src/index.ts",
     "agent:gmail": "tsx src/index.ts --source gmail",

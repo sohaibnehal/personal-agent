@@ -7,7 +7,6 @@ import { pgTable, text, timestamp, jsonb, uuid, index, uniqueIndex } from 'drizz
  *   ('gmail', 'personal')   → { historyId: '12345' }
  *   ('gmail', 'work')       → { historyId: '67890' }
  *   ('outlook', 'main')     → { deltaLink: 'https://graph.microsoft.com/...' }
- *   ('asana', 'default')    → { lastRunAt: '2026-05-09T08:00:00Z' }
  *
  * The shape of `state` is source-specific. Each source module owns its schema.
  */
@@ -29,14 +28,14 @@ export const cursors = pgTable(
  * We store raw payloads so we can re-summarize without re-fetching, and so the
  * dashboard can drill into individual items if needed.
  *
- * `external_id` is the source's own ID (Gmail message ID, Asana task gid, etc.)
+ * `external_id` is the source's own ID (Gmail message ID, Graph message ID, etc.)
  * and (source, account, external_id) is unique — lets us safely re-run.
  */
 export const rawItems = pgTable(
   'raw_items',
   {
     id: uuid('id').defaultRandom().primaryKey(),
-    source: text('source').notNull(),         // 'gmail' | 'outlook' | 'teams' | 'asana'
+    source: text('source').notNull(),         // 'gmail' | 'outlook' | 'teams'
     account: text('account').notNull(),       // 'personal' | 'work' | etc.
     externalId: text('external_id').notNull(),
     kind: text('kind').notNull(),             // 'email' | 'message' | 'mention' | 'task'

@@ -5,12 +5,10 @@ import { setCursor } from './db/cursors.js';
 import { summarize } from './summarize/index.js';
 import type { Source } from './sources/types.js';
 import { gmailSource } from './sources/gmail/index.js';
-import { asanaSource } from './sources/asana/index.js';
 import { outlookSource } from './sources/outlook/index.js';
 
 const ALL_SOURCES: Source[] = [
   gmailSource,
-  asanaSource,
   outlookSource,
   // teamsSource,    // Phase 4
 ];
